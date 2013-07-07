@@ -1,0 +1,171 @@
+<!DOCTYPE html> 
+<html> 
+<head> 
+	<title>Flash Cards</title> 
+	<meta name="viewport" content="width=device-width, initial-scale=1"> 
+	<link rel="stylesheet" href="jquery.mobile-1.2.0.min.css" />
+	<script src="jquery-1.8.2.min.js"></script>
+	<script src="jquery.mobile-1.2.0.min.js"></script>
+	<script src="phonegap.js"></script>
+	<style>
+	body
+	{
+		text-align:center;
+	}
+	.worddesc
+	{
+	}
+	.extended
+	{
+	display:none;
+	}
+	</style>
+	<script language="javascript">
+	
+	var yurl = 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fpreetham.in%2Fprivate%2Ftools%2Fwordmaster%2Findex.php%2Fapi%2Fword%2Frandom%2F1%22&format=json';
+	
+	var word,wordobj;
+	$(document).ready(function() {
+		fetchword();
+		displayword();
+		prefetchword();
+	
+		$('.content').swiperight(function() {
+			displayword();
+			prefetchword();
+		});
+		
+
+		
+		$('.content').tap(function() {
+			$('.extended').slideToggle();
+		});
+		
+	});
+	
+	
+	function prefetchword()
+	{
+	
+		$.ajax({  
+           type: "GET",  
+           url: yurl,  
+		   dataType: 'jsonp',
+		   crossDomain: true,
+           data: "",  
+           success: function(resp){  
+             // we have the response  
+            window.word = resp.query.results.body.p;
+			window.wordobj =jQuery.parseJSON( word );
+			var div = $("div")[0];
+			wordobj=wordobj[0];
+			jQuery.data(div,'word',wordobj.word);
+			jQuery.data(div,'simplemeaning',wordobj.simplemeaning);
+			jQuery.data(div,'meaning',wordobj.meaning);
+			jQuery.data(div,'usage',wordobj.usage);
+			jQuery.data(div,'synonyms',wordobj.synonyms);
+           },  
+           error: function(err){  
+             alert("error: " + err);  
+           }  
+        });
+	}
+	
+	function fetchword()
+	{
+	
+		$.ajax({  
+           type: "GET",  
+           url: 'http://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20html%20where%20url%3D%22http%3A%2F%2Fpreetham.in%2Fprivate%2Ftools%2Fwordmaster%2Findex.php%2Fapi%2Fword%2Frandom%2F1%22&format=json',  
+		   dataType: 'jsonp',
+		   crossDomain: true,
+           data: "",  
+           success: function(resp){  
+             // we have the response  
+            window.word = resp.query.results.body.p;
+			window.wordobj =jQuery.parseJSON( word );
+			var div = $("div")[0];
+			//wordobj=jQuery.parseJSON( wordobj[0]) ;
+			wordobj=wordobj[0];
+			jQuery.data(div,'word',wordobj.word);
+			jQuery.data(div,'simplemeaning',wordobj.simplemeaning);
+			jQuery.data(div,'meaning',wordobj.meaning);
+			jQuery.data(div,'usage',wordobj.usage);
+			jQuery.data(div,'synonyms',wordobj.synonyms);
+			displayword();
+           },  
+           error: function(err){  
+             alert("error: " + err);  
+           }  
+        });
+	}
+	
+	
+	function displayword()
+	{
+		var div = $("div")[0];
+		//alert(jQuery.data(div,'word'));
+		$('.word').html(jQuery.data(div,'word'));
+		$('.simplemeaning').html(jQuery.data(div,'simplemeaning'));
+		$('.meaning').html(jQuery.data(div,'meaning'));
+		$('.usage').html(jQuery.data(div,'usage'));
+		$('.synonyms').html(jQuery.data(div,'synonyms'));
+	
+	}
+	
+	
+	function loadword()
+	{
+		$.ajax({  
+           type: "GET",  
+           url: yurl,  
+		   dataType: 'jsonp',
+		   crossDomain: true,
+           data: "",  
+           success: function(resp){  
+             // we have the response  
+            word = resp.query.results.body.p;
+			wordobj =jQuery.parseJSON( word );
+			wordobj=wordobj[0];
+			$('.word').html(wordobj.word);
+			$('.simplemeaning').html(wordobj.simplemeaning);
+			$('.meaning').html(wordobj.meaning);
+           },  
+           error: function(err){  
+             alert("error: " + err);  
+           }  
+        });
+	}
+	
+	</script>
+</head> 
+<body> 
+
+<div data-role="page" data-theme="b">
+
+	<div data-role="header" data-theme="b">
+		<h1>Flash Cards</h1>
+	</div><!-- /header -->
+
+	<div data-role="content" class="content">	
+		<h1 class="word">Hello world</h1>
+		<div class="worddesc">
+			<h4 class="simplemeaning">Simple meaning</h4>
+			<p class="meaning">Meaning</p>
+		</div>
+		
+		<div class="extended">
+			<p class="usage"></p>
+			<p class="syn"></p>
+		</div>
+		
+	</div><!-- /content -->
+	
+	<div data-role="footer" data-position="fixed" >	
+		<p>&copy Wordmaster Flashcards</p>		
+	</div><!-- /footer -->
+
+</div><!-- /page -->
+
+</body>
+</html>
